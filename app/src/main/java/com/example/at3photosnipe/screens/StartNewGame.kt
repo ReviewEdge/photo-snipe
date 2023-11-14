@@ -24,13 +24,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun StartNewGame() {
+fun StartNewGame(CreateGame: () -> Unit) {
     var textValue by remember { mutableStateOf("") }
     var printedText by remember { mutableStateOf<String?>(null) }
 
@@ -65,6 +66,7 @@ fun StartNewGame() {
             // Print the text when the button is clicked
             printedText = textValue
             keyboardController?.hide()
+            CreateGame()
         },
             modifier = Modifier.padding(12.dp)
         ) {
@@ -77,4 +79,10 @@ fun StartNewGame() {
 //            Text("Printed Text: $it", modifier = Modifier.padding(top = 16.dp))
         }
     }
+}
+
+@Composable
+@Preview
+fun StartNewGamePreview(){
+    StartNewGame(CreateGame = {})
 }

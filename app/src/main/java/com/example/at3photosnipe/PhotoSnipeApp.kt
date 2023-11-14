@@ -69,28 +69,44 @@ fun PhotoSnipeApp() {
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(route = Screens.SelectGame.route) {
-                NoGameScreen()
+                NoGameScreen(CreateGame = {
+                    navController.navigate(Screens.NewGame.route)
+                }, JoinGame = {
+                    navController.navigate(Screens.JoinGame.route)
+                })
+            }
+            composable(route = Screens.NewGame.route) {
+                StartNewGame(CreateGame = {
+                    navController.navigate(Screens.CreateGame.route)
+                })
+            }
+            composable(route = Screens.CreateGame.route) {
+                CreateGame(StartGame = {
+                    navController.navigate(Screens.Main.route)
+                })
+            }
+            composable(route = Screens.JoinGame.route) {
+                JoinGame(Join = {
+                    navController.navigate(Screens.Main.route)
+                })
+            }
+            composable(route = Screens.Main.route) {
+                MainGame(Map = {
+                    navController.navigate(Screens.Map.route)
+                })
             }
             composable(route = Screens.Snipe.route) {
-                Snipe()
+                Snipe(Snipe = {
+                    navController.navigate(Screens.Confirm.route)
+                })
+            }
+            composable(route = Screens.Confirm.route) {
+                ConfirmSnipe(Confirm = {
+                    navController.navigate(Screens.Main.route)
+                })
             }
             composable(route = Screens.Map.route) {
                 ShowMap()
-            }
-            composable(route = Screens.CreateGame.route) {
-                CreateGame()
-            }
-            composable(route = Screens.Main.route) {
-                MainGame()
-            }
-            composable(route = Screens.Confirm.route) {
-                ConfirmSnipe()
-            }
-            composable(route = Screens.NewGame.route) {
-                StartNewGame()
-            }
-            composable(route = Screens.JoinGame.route) {
-                JoinGame()
             }
         }
     }

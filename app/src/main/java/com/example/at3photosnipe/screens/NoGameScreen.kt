@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun NoGameScreen() {
+fun NoGameScreen(CreateGame: () -> Unit, JoinGame: () -> Unit) {
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -23,12 +23,12 @@ fun NoGameScreen() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = { /*TODO*/ },
+        Button(onClick = {CreateGame()},
             modifier = Modifier.padding(12.dp)
         ) {
             Text(text="NEW GAME", fontSize = 24.sp)
         }
-        Button(onClick = { /*TODO*/ },
+        Button(onClick = {JoinGame()},
             modifier = Modifier.padding(12.dp)
         ) {
             Text(text="JOIN A GAME", fontSize = 24.sp)
@@ -40,5 +40,5 @@ fun NoGameScreen() {
 @Preview
 @Composable
 fun NoGameScreenPreview() {
-    NoGameScreen()
+    NoGameScreen(CreateGame = {}, JoinGame = {})
 }
