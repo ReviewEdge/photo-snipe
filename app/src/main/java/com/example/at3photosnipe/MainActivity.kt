@@ -10,6 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.at3photosnipe.screens.JoinGame
+import com.example.at3photosnipe.screens.NoGameScreen
+import com.example.at3photosnipe.screens.StartNewGame
 import com.example.at3photosnipe.ui.theme.AT3PhotoSnipeTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,8 +25,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+//                    Greeting("Android")
+//                    NoGameScreen()
+//                    JoinGame()
+//                    StartNewGame()
                 }
+
             }
         }
     }
