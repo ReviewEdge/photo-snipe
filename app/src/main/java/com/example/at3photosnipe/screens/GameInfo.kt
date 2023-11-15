@@ -42,7 +42,7 @@ fun GameInfo() {
 
 
 
-        Text(text="Game Name", fontSize = 32.sp, modifier = Modifier.padding(12.dp))
+        Text(text="Grove City", fontSize = 32.sp, modifier = Modifier.padding(12.dp))
 
         Divider(modifier = Modifier
             .fillMaxWidth()
@@ -62,7 +62,8 @@ fun GameInfo() {
             .fillMaxWidth())
         LazyColumn {
             items(4) { index ->
-                BulletedListItem(text = "Player $index", isGameManager)
+                val use = index+1
+                BulletedListItem(text = "Player $use", isGameManager)
             }
         }
 

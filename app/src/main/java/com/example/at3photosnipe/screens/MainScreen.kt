@@ -74,7 +74,7 @@ fun MainGame(Map: () -> Unit){
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Game Name",
+                    text = "Grove City",
                     //                modifier = Modifier.padding(16.dp)
                     fontSize = 32.sp
                 )
@@ -113,6 +113,7 @@ fun MainGame(Map: () -> Unit){
             LazyVerticalGrid(
                 columns = GridCells.Fixed(1),
                 modifier = Modifier.fillMaxSize(),
+//                reverseLayout = true
             ) {
                 items(snipes) { snipe ->
                     PictureCard(snipe = snipe)

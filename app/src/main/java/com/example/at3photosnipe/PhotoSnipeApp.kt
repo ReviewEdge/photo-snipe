@@ -54,6 +54,7 @@ fun PhotoSnipeApp() {
             if (isNotStartScreen) {
                 MyTopBar(
                     canGoBack = canGoBack(currentScreenHandler?.destination?.route),
+                    selectGame = { navController.navigate(Screens.SelectGame.route) },
                     goBack = { navController.navigateUp() },
                     goToMain = { navController.navigate(Screens.Main.route) }
                 )
@@ -125,7 +126,8 @@ fun PhotoSnipeApp() {
 @Composable
 fun MyTopBar(canGoBack: Boolean,
              goBack: () -> Unit,
-             goToMain: () -> Unit
+             goToMain: () -> Unit,
+             selectGame: () -> Unit,
 ){
     Row(modifier = Modifier
         .fillMaxWidth()
@@ -137,6 +139,16 @@ fun MyTopBar(canGoBack: Boolean,
                     contentDescription = null
                 )
             }
+        }
+//        IconButton(onClick = {
+//            selectGame()
+//        }) {
+//            Icon(painter = painterResource(id = R.drawable.baseline_fiber_new_24), contentDescription = null)
+//        }
+        Button(onClick = {
+            selectGame()
+        }) {
+            Text(text = "New Game")
         }
         Button(onClick = {
             goToMain()
