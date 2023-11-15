@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,6 +21,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.at3photosnipe.screens.ConfirmSnipe
 import com.example.at3photosnipe.screens.CreateGame
+import com.example.at3photosnipe.screens.GameInfo
 import com.example.at3photosnipe.screens.JoinGame
 import com.example.at3photosnipe.screens.MainGame
 import com.example.at3photosnipe.screens.NoGameScreen
@@ -53,6 +55,7 @@ fun PhotoSnipeApp() {
                 MyTopBar(
                     canGoBack = canGoBack(currentScreenHandler?.destination?.route),
                     goBack = { navController.navigateUp() },
+                    goToMain = { navController.navigate(Screens.Main.route) }
                 )
             }
         },
@@ -77,14 +80,21 @@ fun PhotoSnipeApp() {
             }
             composable(route = Screens.NewGame.route) {
                 StartNewGame(CreateGame = {
-                    navController.navigate(Screens.CreateGame.route)
+                    navController.navigate(Screens.GameInfo.route)
                 })
             }
-            composable(route = Screens.CreateGame.route) {
-                CreateGame(StartGame = {
-                    navController.navigate(Screens.Main.route)
-                })
+            composable(route = Screens.GameInfo.route) {
+                GameInfo(
+//                    CreateGame = {
+//                    navController.navigate(Screens.GameInfo.route)
+//                }
+                )
             }
+//            composable(route = Screens.CreateGame.route) {
+//                CreateGame(StartGame = {
+//                    navController.navigate(Screens.Main.route)
+//                })
+//            }
             composable(route = Screens.JoinGame.route) {
                 JoinGame(Join = {
                     navController.navigate(Screens.Main.route)
@@ -114,7 +124,9 @@ fun PhotoSnipeApp() {
 
 @Composable
 fun MyTopBar(canGoBack: Boolean,
-             goBack: () -> Unit){
+             goBack: () -> Unit,
+             goToMain: () -> Unit
+){
     Row(modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp),
@@ -126,7 +138,11 @@ fun MyTopBar(canGoBack: Boolean,
                 )
             }
         }
-        Text(text = "temp")
+        Button(onClick = {
+            goToMain()
+        }) {
+            Text(text = "PhotoSnipe")
+        }
     }
 }
 

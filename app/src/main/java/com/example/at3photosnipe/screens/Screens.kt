@@ -3,8 +3,9 @@ package com.example.at3photosnipe.screens
 sealed class Screens(val route: String) {
     object JoinGame: Screens("join_game_screen")
     object NewGame: Screens("new_game_screen")
+    object GameInfo: Screens("game_info_screen")
     object SelectGame: Screens("select_game_screen")
-    object CreateGame: Screens("create_game_screen")
+//    object CreateGame: Screens("create_game_screen")
     object Main: Screens("main_screen")
     object Confirm: Screens("confirm_screen")
     object Snipe: Screens("snipe_screen")
