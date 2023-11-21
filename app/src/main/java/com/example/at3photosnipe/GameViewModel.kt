@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlin.random.Random
 
-data class Player(val name: String, val score: Int)
+data class Player(val name: String, var score: Int)
 
 data class Snipe(
     val pictureRes: Int,
@@ -67,7 +67,14 @@ class GameViewModel : ViewModel() {
     }
 
     fun addSnipe(newSnipe: Snipe) {
-        gameState!!.value.snipes.add(newSnipe)
+        if(newSnipe.sniper != newSnipe.snipee) {
+            gameState!!.value.snipes.add(newSnipe)
+            givePlayerPoint(newSnipe.sniper)
+        }
+    }
+
+    private fun givePlayerPoint(p: Player) {
+        p.score += 1
     }
 
     fun addPlayer(newPlayer: Player) {
