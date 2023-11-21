@@ -20,7 +20,7 @@ data class GameState(
     val gameName: String,
     val gameJoinCode: String,
     val players: MutableList<Player> = mutableListOf(),
-    val snipes: MutableList<Snipe> = mutableListOf(),
+    var snipes: MutableList<Snipe> = mutableListOf(),
     val gameAdmin: Player,
     var currentPlayer: Player,
 )
@@ -106,6 +106,26 @@ class GameViewModel : ViewModel() {
 
     fun isGameMangager(): Boolean {
         return getCurrentPlayer() == gameState!!.value.gameAdmin
+    }
+
+    fun makeSomeFakeSnipesForTESTING() {
+        val players = listOf(
+            Player(name = "Player 2", score = 18),
+            Player(name = "Player 3", score = 18),
+            Player(name = "Player 4", score = 14),
+            // Add more players as needed
+        )
+
+        val s1 = Snipe(pictureRes = R.drawable.architecture, sniper = getCurrentPlayer(), snipee = players[1], "10:27 AM")
+        val s2 = Snipe(pictureRes = R.drawable.business, sniper = players[1], snipee = players[0], "10:52 AM")
+        val s3 = Snipe(pictureRes = R.drawable.culinary, sniper = players[2], snipee = getCurrentPlayer(), "11:08 AM")
+        val s4 = Snipe(pictureRes = R.drawable.film, sniper = getCurrentPlayer(), snipee = players[2], "11:15 AM")
+
+        gameState!!.value.snipes = mutableListOf(s1,s2,s3,s4)
+    }
+
+    fun getSnipes(): MutableList<Snipe> {
+        return gameState!!.value.snipes
     }
 
 

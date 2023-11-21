@@ -89,6 +89,13 @@ fun StartNewGame(VM: GameViewModel, CreateGame: () -> Unit) {
             if (newGameName.isNotEmpty() and newPlayerName.isNotEmpty()) {
                 VM.createGame(newGameName = newGameName,
                     firstPlayerName = newPlayerName)
+
+
+                //TODO: delete me
+                VM.makeSomeFakeSnipesForTESTING()
+
+
+
                 keyboardController?.hide()
                 CreateGame()
             }

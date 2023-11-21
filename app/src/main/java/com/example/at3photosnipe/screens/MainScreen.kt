@@ -27,6 +27,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,23 +44,6 @@ import com.example.at3photosnipe.R
 
 @Composable
 fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
-
-    val players = listOf(
-        Player(name = "Player 1", score = 21),
-        Player(name = "Player 2", score = 18),
-        Player(name = "Player 3", score = 18),
-        Player(name = "Player 4", score = 14),
-        // Add more players as needed
-    )
-
-    val s1 = Snipe(pictureRes = R.drawable.architecture, sniper = players.first(), snipee = players[1], "10:27 AM")
-    val s2 = Snipe(pictureRes = R.drawable.business, sniper = players[2], snipee = players[1], "10:52 AM")
-    val s3 = Snipe(pictureRes = R.drawable.culinary, sniper = players[3], snipee = players[0], "11:08 AM")
-    val s4 = Snipe(pictureRes = R.drawable.film, sniper = players.first(), snipee = players[3], "11:15 AM")
-
-    val snipes = listOf(s1,s2,s3,s4)
-
-
 
     Column {
 
@@ -120,7 +107,7 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
                 modifier = Modifier.fillMaxSize(),
 //                reverseLayout = true
             ) {
-                items(snipes) { snipe ->
+                items(VM.getSnipes()) { snipe ->
                     PictureCard(snipe = snipe)
                 }
             }
@@ -180,9 +167,28 @@ fun PictureCard(snipe: Snipe) {
         )
 
         // Display the text
+        val annotatedString = buildAnnotatedString {
+            withStyle(
+                style = SpanStyle(
+                    fontWeight = FontWeight.Bold
+                )
+            ) {
+                append("${snipe.sniper.name}")
+            }
+
+            append(" sniped ")
+
+            withStyle(
+                style = SpanStyle(
+                    fontWeight = FontWeight.Bold
+                )
+            ) {
+                append("${snipe.snipee.name}")
+            }
+        }
+
         Text(
-            text = "${snipe.sniper.name} sniped ${snipe.snipee.name}",
-//            style = MaterialTheme.typography.body1,
+            text = annotatedString,
             modifier = Modifier
                 .padding(8.dp)
                 .fillMaxWidth()
