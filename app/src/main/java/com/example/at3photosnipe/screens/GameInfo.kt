@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CheckCircle
@@ -29,20 +30,22 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.at3photosnipe.GameViewModel
+import com.example.at3photosnipe.Player
 
 @Composable
-fun GameInfo() {
+fun GameInfo(VM: GameViewModel) {
     Column (
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // should probably change:
-        var isGameManager by remember { mutableStateOf(false) }
+        var isGameManager by remember { mutableStateOf(VM.isGameMangager()) }
 
 
 
-        Text(text="Grove City", fontSize = 32.sp, modifier = Modifier.padding(12.dp))
+        Text(text=VM.getGameName(), fontSize = 32.sp, modifier = Modifier.padding(12.dp))
 
         Divider(modifier = Modifier
             .fillMaxWidth()
@@ -50,7 +53,7 @@ fun GameInfo() {
         )
 
         Text(text="Share this code so others can join:", fontSize = 24.sp, modifier = Modifier.padding(8.dp))
-        Text(text="1234ABCD", fontSize = 40.sp, modifier = Modifier.padding(12.dp))
+        Text(text=VM.getJoinCode(), fontSize = 40.sp, modifier = Modifier.padding(12.dp))
 
         Divider(modifier = Modifier
             .fillMaxWidth()
@@ -61,9 +64,9 @@ fun GameInfo() {
             .padding(8.dp)
             .fillMaxWidth())
         LazyColumn {
-            items(4) { index ->
-                val use = index+1
-                BulletedListItem(text = "Player $use", isGameManager)
+            items(VM.getPlayers()) { player ->
+                println(player.name)
+                BulletedListItem(player = player, isGameManager, VM=VM)
             }
         }
 
@@ -71,7 +74,7 @@ fun GameInfo() {
 }
 
 @Composable
-fun BulletedListItem(text: String, isGameManager: Boolean) {
+fun BulletedListItem(player: Player, isGameManager: Boolean, VM: GameViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -79,21 +82,15 @@ fun BulletedListItem(text: String, isGameManager: Boolean) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = "• " + text)
+        Text(text = "• " + player.name)
         if(isGameManager) {
             Button(onClick = {
                 /*TODO*/
                 // remove player
+                VM.removePlayer(player)
             }) {
                 Text(text = "Remove", color = Color.Red)
             }
         }
     }
-}
-
-
-@Preview
-@Composable
-fun GameInfoPreview() {
-    GameInfo()
 }

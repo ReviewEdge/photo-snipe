@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -30,14 +31,19 @@ import com.example.at3photosnipe.screens.ShowMap
 import com.example.at3photosnipe.screens.Snipe
 import com.example.at3photosnipe.screens.StartNewGame
 import com.example.at3photosnipe.screens.canGoBack
+import com.example.at3photosnipe.GameViewModel
 import com.example.at3photosnipe.ui.theme.AT3PhotoSnipeTheme
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoSnipeApp() {
+    val VM : GameViewModel = viewModel()
+
     val navController = rememberNavController()
     val currentScreenHandler by navController.currentBackStackEntryAsState()
     val isNotStartScreen = currentScreenHandler?.destination?.route != Screens.SelectGame.route
+
 
     var cameraEnable = false
 
@@ -80,12 +86,12 @@ fun PhotoSnipeApp() {
                 })
             }
             composable(route = Screens.NewGame.route) {
-                StartNewGame(CreateGame = {
+                StartNewGame(VM=VM, CreateGame = {
                     navController.navigate(Screens.GameInfo.route)
                 })
             }
             composable(route = Screens.GameInfo.route) {
-                GameInfo(
+                GameInfo(VM=VM
 //                    CreateGame = {
 //                    navController.navigate(Screens.GameInfo.route)
 //                }
@@ -97,14 +103,19 @@ fun PhotoSnipeApp() {
 //                })
 //            }
             composable(route = Screens.JoinGame.route) {
-                JoinGame(Join = {
+                JoinGame(VM=VM, Join = {
                     navController.navigate(Screens.Main.route)
                 })
             }
             composable(route = Screens.Main.route) {
-                MainGame(Map = {
+                MainGame(VM=VM,
+                    Map = {
                     navController.navigate(Screens.Map.route)
-                })
+                    },
+                    goToInfo = {
+                        navController.navigate(Screens.GameInfo.route)
+                    }
+                )
             }
             composable(route = Screens.Snipe.route) {
                 Snipe(Snipe = {

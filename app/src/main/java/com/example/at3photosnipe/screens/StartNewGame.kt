@@ -27,12 +27,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.at3photosnipe.GameViewModel
 
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun StartNewGame(CreateGame: () -> Unit) {
-    var textValue by remember { mutableStateOf("") }
+fun StartNewGame(VM: GameViewModel, CreateGame: () -> Unit) {
+    var newGameName by remember { mutableStateOf("") }
+    var newPlayerName by remember { mutableStateOf("") }
     var printedText by remember { mutableStateOf<String?>(null) }
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -46,11 +48,11 @@ fun StartNewGame(CreateGame: () -> Unit) {
     ) {
         // Text input composable with uppercase transformation
         TextField(
-            value = textValue,
+            value = newGameName,
             onValueChange = {
-                textValue = it
+                newGameName = it
             },
-            label = { Text("Enter your game name:") },
+            label = { Text("Enter a name for your game:") },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             ),
@@ -62,27 +64,39 @@ fun StartNewGame(CreateGame: () -> Unit) {
         )
 
 
+        TextField(
+            value = newPlayerName,
+            onValueChange = {
+                newPlayerName = it
+            },
+            label = { Text("Enter your name:") },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+                .height(80.dp), // Adjusting the height for a larger input field
+            textStyle = TextStyle(fontSize = 32.sp)
+        )
+
+
+
+
         Button(onClick = {
             // Print the text when the button is clicked
-            printedText = textValue
-            keyboardController?.hide()
-            CreateGame()
+
+            if (newGameName.isNotEmpty() and newPlayerName.isNotEmpty()) {
+                VM.createGame(newGameName = newGameName,
+                    firstPlayerName = newPlayerName)
+                keyboardController?.hide()
+                CreateGame()
+            }
         },
             modifier = Modifier.padding(12.dp)
         ) {
             Text(text="START NEW GAME", fontSize = 24.sp)
         }
 
-        // Display the printed text
-        printedText?.let {
-            //do something with input
-//            Text("Printed Text: $it", modifier = Modifier.padding(top = 16.dp))
-        }
     }
-}
-
-@Composable
-@Preview
-fun StartNewGamePreview(){
-    StartNewGame(CreateGame = {})
 }

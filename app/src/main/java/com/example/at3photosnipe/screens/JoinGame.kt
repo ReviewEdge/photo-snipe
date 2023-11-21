@@ -27,12 +27,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.at3photosnipe.GameViewModel
+import com.example.at3photosnipe.Player
 
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun JoinGame(Join: () -> Unit) {
-    var textValue by remember { mutableStateOf("") }
+fun JoinGame(VM: GameViewModel, Join: () -> Unit) {
+    var joinCode by remember { mutableStateOf("") }
+    var newPlayerName by remember { mutableStateOf("") }
     var printedText by remember { mutableStateOf<String?>(null) }
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -46,9 +49,9 @@ fun JoinGame(Join: () -> Unit) {
     ) {
         // Text input composable with uppercase transformation
         TextField(
-            value = textValue,
+            value = joinCode,
             onValueChange = {
-                textValue = it.uppercase()
+                joinCode = it.uppercase()
             },
             label = { Text("Enter your game code:") },
             keyboardOptions = KeyboardOptions(
@@ -61,12 +64,48 @@ fun JoinGame(Join: () -> Unit) {
             textStyle = TextStyle(fontSize = 36.sp)
         )
 
+        TextField(
+            value = newPlayerName,
+            onValueChange = {
+                newPlayerName = it
+            },
+            label = { Text("Enter your name:") },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+                .height(80.dp), // Adjusting the height for a larger input field
+            textStyle = TextStyle(fontSize = 32.sp)
+        )
+
 
         Button(onClick = {
             // Print the text when the button is clicked
-            printedText = textValue
-            keyboardController?.hide()
-            Join()
+
+            //TODO:
+            //ACTIVATE THIS CODE IN PRODUCTION (leaving backdoor for dev)
+//            if (!VM.isNameTaken(newPlayerName)) {
+//
+//            }
+
+
+
+            //this should actually be checking the code against a database of games
+            if (VM.gameExists())
+                if ((VM.getJoinCode() == joinCode) and newPlayerName.isNotEmpty()) {
+                keyboardController?.hide()
+
+                //adds as new player
+                val newPlayer = Player(name = newPlayerName, score = 0)
+                VM.addPlayer(newPlayer)
+                VM.setCurrentPlayer(newPlayer)
+
+                Join()
+            }
+
+
         },
             modifier = Modifier.padding(12.dp)
         ) {
@@ -81,8 +120,3 @@ fun JoinGame(Join: () -> Unit) {
     }
 }
 
-@Composable
-@Preview
-fun JoinGamePreview(){
-    JoinGame(Join = {})
-}

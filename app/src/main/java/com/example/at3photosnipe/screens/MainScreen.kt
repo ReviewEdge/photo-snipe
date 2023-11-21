@@ -2,6 +2,7 @@ package com.example.at3photosnipe.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -28,16 +30,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.at3photosnipe.GameViewModel
+import com.example.at3photosnipe.Player
+import com.example.at3photosnipe.Snipe
 import com.example.at3photosnipe.R
 
 
-data class Player(val name: String, val score: Int)
-
-data class Snipe(val pictureRes: Int, val sniper: Player, val snipee: Player, val timeOfDay: String)
 
 
 @Composable
-fun MainGame(Map: () -> Unit){
+fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
 
     val players = listOf(
         Player(name = "Player 1", score = 21),
@@ -73,8 +75,11 @@ fun MainGame(Map: () -> Unit){
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
+
+
                 Text(
-                    text = "Grove City",
+                    modifier = Modifier.clickable(enabled = true, onClick={goToInfo()}),
+                    text = VM.getGameName(),
                     //                modifier = Modifier.padding(16.dp)
                     fontSize = 32.sp
                 )
@@ -98,7 +103,7 @@ fun MainGame(Map: () -> Unit){
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
                 content = {
-                    items(players) { player ->
+                    items(VM.getPlayers()) { player ->
                         PlayerItem(player = player)
                     }
                 }
@@ -201,9 +206,3 @@ fun PictureCard(snipe: Snipe) {
 
 
 
-
-@Composable
-@Preview
-fun MainViewPreview(){
-    MainGame(Map = {})
-}
