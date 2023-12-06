@@ -8,7 +8,7 @@ sealed class Screens(val route: String) {
 //    object CreateGame: Screens("create_game_screen")
     object Main: Screens("main_screen")
     object Confirm: Screens("confirm_screen")
-    object Snipe: Screens("snipe_screen")
+    object CameraView: Screens("snipe_screen")
     object Map: Screens("map_screen")
 }
 

@@ -51,6 +51,12 @@ android {
 
 dependencies {
 
+    // camera
+    val camerax_version = "1.0.1"
+    implementation("androidx.camera:camera-camera2:$camerax_version")
+    implementation("androidx.camera:camera-lifecycle:$camerax_version")
+    implementation("androidx.camera:camera-view:1.0.0-alpha27")
+
     // view model
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
@@ -64,6 +70,8 @@ dependencies {
 
     // live data
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
