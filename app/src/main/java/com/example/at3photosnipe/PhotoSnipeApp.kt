@@ -1,5 +1,7 @@
 package com.example.at3photosnipe
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,10 +37,11 @@ import com.example.at3photosnipe.GameViewModel
 import com.example.at3photosnipe.ui.theme.AT3PhotoSnipeTheme
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoSnipeApp() {
-    val VM : GameViewModel = viewModel()
+    val VM : GameViewModel = GameViewModel.getInstance()
 
     val navController = rememberNavController()
     val currentScreenHandler by navController.currentBackStackEntryAsState()

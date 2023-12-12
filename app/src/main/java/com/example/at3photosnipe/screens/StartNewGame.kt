@@ -1,5 +1,7 @@
 package com.example.at3photosnipe.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +15,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
@@ -30,12 +33,16 @@ import androidx.compose.ui.unit.sp
 import com.example.at3photosnipe.GameViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun StartNewGame(VM: GameViewModel, CreateGame: () -> Unit) {
     var newGameName by remember { mutableStateOf("") }
     var newPlayerName by remember { mutableStateOf("") }
     var printedText by remember { mutableStateOf<String?>(null) }
+
+
+
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -84,16 +91,9 @@ fun StartNewGame(VM: GameViewModel, CreateGame: () -> Unit) {
 
 
         Button(onClick = {
-            // Print the text when the button is clicked
-
             if (newGameName.isNotEmpty() and newPlayerName.isNotEmpty()) {
                 VM.createGame(newGameName = newGameName,
                     firstPlayerName = newPlayerName)
-
-
-                //TODO: delete me
-                VM.makeSomeFakeSnipesForTESTING()
-
 
 
                 keyboardController?.hide()
