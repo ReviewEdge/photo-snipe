@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun CreateGame(StartGame: () -> Unit){
+
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally

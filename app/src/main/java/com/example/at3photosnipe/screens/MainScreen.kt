@@ -21,6 +21,8 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,10 +42,12 @@ import com.example.at3photosnipe.Snipe
 import com.example.at3photosnipe.R
 
 
-
-
 @Composable
 fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
+
+    val snipeList by VM.snipes.collectAsState()
+    val playerList by VM.allPlayersList.collectAsState()
+
 
     Column {
 
@@ -64,12 +68,14 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
             ) {
 
 
-                Text(
-                    modifier = Modifier.clickable(enabled = true, onClick={goToInfo()}),
-                    text = VM.getGameName(),
-                    //                modifier = Modifier.padding(16.dp)
-                    fontSize = 32.sp
-                )
+                VM.getGameName()?.let {
+                    Text(
+                        modifier = Modifier.clickable(enabled = true, onClick={goToInfo()}),
+                        text = it,
+                        //                modifier = Modifier.padding(16.dp)
+                        fontSize = 32.sp
+                    )
+                }
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -90,8 +96,10 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
                 content = {
-                    items(VM.getPlayers()) { player ->
-                        PlayerItem(player = player)
+                    items(playerList) { player ->
+                        if(player.gameInstanceId == VM.currentGameInstance!!.game_id) {
+                            PlayerItem(player = player)
+                        }
                     }
                 }
             )
@@ -107,9 +115,16 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
                 modifier = Modifier.fillMaxSize(),
 //                reverseLayout = true
             ) {
-                items(VM.getSnipes()) { snipe ->
-                    PictureCard(snipe = snipe)
+
+                var noSnipes = true
+                items(snipeList) { snipe ->
+                    if(snipe.gameInstanceId == VM.currentGameInstance!!.game_id) {
+                        PictureCard(snipe = snipe, VM=VM)
+                        noSnipes = false
+                    }
                 }
+
+
             }
 
         }
@@ -146,7 +161,7 @@ fun PlayerItem(player: Player) {
 
 
 @Composable
-fun PictureCard(snipe: Snipe) {
+fun PictureCard(snipe: Snipe, VM: GameViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -156,7 +171,7 @@ fun PictureCard(snipe: Snipe) {
     ) {
         // Display the picture
         Image(
-            painter = painterResource(id = snipe.pictureRes),
+            painter = painterResource(id = snipe.picture_res),
             contentDescription = null, // You should provide a proper content description
             modifier = Modifier
 //                .fillMaxWidth()
@@ -173,7 +188,13 @@ fun PictureCard(snipe: Snipe) {
                     fontWeight = FontWeight.Bold
                 )
             ) {
-                append("${snipe.sniper.name}")
+
+                // TODO: make this so that instead of getting id, it actually gets the sniper's player object
+
+//                append("${snipe.sniper.name}")
+
+                append("${VM.getPlayerById(snipe.sniper_id)?.name}")
+
             }
 
             append(" sniped ")
@@ -183,7 +204,12 @@ fun PictureCard(snipe: Snipe) {
                     fontWeight = FontWeight.Bold
                 )
             ) {
-                append("${snipe.snipee.name}")
+
+
+                // TODO: make this so that instead of getting id, it actually gets the snipee's player object
+//                append("${snipe.snipee.name}")
+                append("${VM.getPlayerById(snipe.snipee_id)?.name}")
+
             }
         }
 
@@ -196,7 +222,7 @@ fun PictureCard(snipe: Snipe) {
 
         // Display the time of day
         Text(
-            text = "${snipe.timeOfDay}",
+            text = "${snipe.time_of_day}",
             fontSize = 12.sp,
 //            style = MaterialTheme.typography.caption,
             modifier = Modifier
@@ -208,7 +234,4 @@ fun PictureCard(snipe: Snipe) {
 
     }
 }
-
-
-
 

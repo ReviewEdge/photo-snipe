@@ -1,5 +1,7 @@
 package com.example.at3photosnipe.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,10 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
@@ -20,25 +22,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.at3photosnipe.GameViewModel
 import com.example.at3photosnipe.Player
+import com.example.at3photosnipe.data.GameInstance
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun JoinGame(VM: GameViewModel, Join: () -> Unit) {
     var joinCode by remember { mutableStateOf("") }
     var newPlayerName by remember { mutableStateOf("") }
-    var printedText by remember { mutableStateOf<String?>(null) }
 
     val keyboardController = LocalSoftwareKeyboardController.current
+
+
+    val gList by VM.gameInstances.collectAsState()
+
 
     Column(
         modifier = Modifier
@@ -82,7 +87,6 @@ fun JoinGame(VM: GameViewModel, Join: () -> Unit) {
 
 
         Button(onClick = {
-            // Print the text when the button is clicked
 
             //TODO:
             //ACTIVATE THIS CODE IN PRODUCTION (leaving backdoor for dev)
@@ -91,20 +95,27 @@ fun JoinGame(VM: GameViewModel, Join: () -> Unit) {
 //            }
 
 
+                if ((joinCode != null) and newPlayerName.isNotEmpty()) {
+                    keyboardController?.hide()
 
-            //this should actually be checking the code against a database of games
-            if (VM.gameExists())
-                if ((VM.getJoinCode() == joinCode) and newPlayerName.isNotEmpty()) {
-                keyboardController?.hide()
+                    var gameThatImGonnaJoin: GameInstance? = null
+                    gList.forEach {g->
+                        if(g.gameJoinCode == joinCode) {
+                            gameThatImGonnaJoin = g
+                        }
+                    }
 
-                //adds as new player
-                val newPlayer = Player(name = newPlayerName, score = 0)
-                VM.addPlayer(newPlayer)
-                VM.setCurrentPlayer(newPlayer)
+                    if (gameThatImGonnaJoin != null) {
+                        println("found the game")
 
-                Join()
-            }
+                        VM.createPlayerAndAddToGameAndSetCurrents(newPlayerName = newPlayerName, game = gameThatImGonnaJoin!!)
 
+                        println("added player to game")
+
+                        Join()
+                    }
+
+                }
 
         },
             modifier = Modifier.padding(12.dp)
@@ -112,11 +123,6 @@ fun JoinGame(VM: GameViewModel, Join: () -> Unit) {
             Text(text="JOIN GAME", fontSize = 24.sp)
         }
 
-        // Display the printed text
-        printedText?.let {
-            //do something with input
-//            Text("Printed Text: $it", modifier = Modifier.padding(top = 16.dp))
-        }
     }
 }
 
