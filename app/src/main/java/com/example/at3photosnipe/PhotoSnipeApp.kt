@@ -2,6 +2,7 @@ package com.example.at3photosnipe
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -30,12 +32,13 @@ import com.example.at3photosnipe.screens.MainGame
 import com.example.at3photosnipe.screens.NoGameScreen
 import com.example.at3photosnipe.screens.Screens
 import com.example.at3photosnipe.screens.ShowMap
-import com.example.at3photosnipe.screens.Snipe
+//import com.example.at3photosnipe.screens.
 import com.example.at3photosnipe.screens.StartNewGame
 import com.example.at3photosnipe.screens.canGoBack
 import com.example.at3photosnipe.GameViewModel
 import com.example.at3photosnipe.ui.theme.AT3PhotoSnipeTheme
 
+public var isCameraScreen = false
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,11 +49,11 @@ fun PhotoSnipeApp() {
     val navController = rememberNavController()
     val currentScreenHandler by navController.currentBackStackEntryAsState()
     val isNotStartScreen = currentScreenHandler?.destination?.route != Screens.SelectGame.route
-
+    var isCameraScreen = currentScreenHandler?.destination?.route == Screens.CameraView.route
 
     var cameraEnable = false
 
-    if (currentScreenHandler?.destination?.route == Screens.Snipe.route ||
+    if (currentScreenHandler?.destination?.route == Screens.CameraView.route ||
         currentScreenHandler?.destination?.route == Screens.Confirm.route ||
         currentScreenHandler?.destination?.route == Screens.Main.route ||
         currentScreenHandler?.destination?.route == Screens.Map.route)
@@ -71,7 +74,7 @@ fun PhotoSnipeApp() {
         },
         bottomBar = {
                 MyBottomBar(
-                    goCamera = {navController.navigate(Screens.Snipe.route)},
+                    goCamera = {navController.navigate(Screens.CameraView.route)},
                     enabled = cameraEnable
                 )
         }
@@ -100,11 +103,11 @@ fun PhotoSnipeApp() {
 //                }
                 )
             }
-//            composable(route = Screens.CreateGame.route) {
-//                CreateGame(StartGame = {
-//                    navController.navigate(Screens.Main.route)
-//                })
-//            }
+            composable(route = Screens.CameraView.route) {
+                CreateGame(StartGame = {
+                    navController.navigate(Screens.Main.route)
+                })
+            }
             composable(route = Screens.JoinGame.route) {
                 JoinGame(VM=VM, Join = {
                     navController.navigate(Screens.Main.route)
@@ -120,10 +123,10 @@ fun PhotoSnipeApp() {
                     }
                 )
             }
-            composable(route = Screens.Snipe.route) {
-                Snipe(Snipe = {
-                    navController.navigate(Screens.Confirm.route)
-                })
+            composable(route = Screens.CameraView.route) {
+//                Snipe(CameraView = {
+//                    navController.navigate(Screens.Confirm.route)
+//                })
             }
             composable(route = Screens.Confirm.route) {
                 ConfirmSnipe(Confirm = {
@@ -134,6 +137,10 @@ fun PhotoSnipeApp() {
                 ShowMap()
             }
         }
+    }
+
+    fun getCameraScreen(): () -> Boolean {
+        return {isCameraScreen}
     }
 }
 
@@ -175,7 +182,12 @@ fun MyTopBar(canGoBack: Boolean,
 @Composable
 fun MyBottomBar(goCamera: () -> Unit, enabled: Boolean, modifier: Modifier = Modifier.fillMaxWidth()){
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
-        IconButton(onClick = { goCamera()}, enabled = enabled
+
+        val lContext = LocalContext.current
+
+        IconButton(onClick = {
+            lContext.startActivity(Intent(lContext, CameraActivity::class.java))
+                             }, enabled = enabled
         ) {
             Icon(painter = painterResource(id = R.drawable.baseline_camera_alt_24),
                 contentDescription = null
