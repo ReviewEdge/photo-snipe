@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -82,6 +83,7 @@ fun PhotoSnipeApp() {
         bottomBar = {
                 MyBottomBar(
                     goCamera = {navController.navigate(Screens.CameraView.route)},
+                    goMap = {navController.navigate(Screens.Map.route)},
                     enabled = cameraEnable
                 )
         }
@@ -193,7 +195,7 @@ fun MyTopBar(canGoBack: Boolean,
 }
 
 @Composable
-fun MyBottomBar(goCamera: () -> Unit, enabled: Boolean, modifier: Modifier = Modifier.fillMaxWidth()){
+fun MyBottomBar(goCamera: () -> Unit, goMap: () -> Unit, enabled: Boolean, modifier: Modifier = Modifier.fillMaxWidth()){
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
 
         val lContext = LocalContext.current
@@ -204,6 +206,15 @@ fun MyBottomBar(goCamera: () -> Unit, enabled: Boolean, modifier: Modifier = Mod
         ) {
             Icon(painter = painterResource(id = R.drawable.baseline_camera_alt_24),
                 contentDescription = null
+            )
+        }
+
+        IconButton(onClick = {goMap()},
+            enabled = enabled
+        ) {
+            Icon(painter = painterResource(id = R.drawable.baseline_map_24),
+                contentDescription = null,
+                modifier = Modifier.fillMaxHeight()
             )
         }
     }

@@ -18,4 +18,7 @@ interface SnipeDao {
 
     @Query("SELECT * FROM snipe")
     fun getAllSnipes(): Flow<List<Snipe>>
+
+    @Query("SELECT location FROM snipe")
+    fun getAllLocations(): Flow<List<String>>
 }

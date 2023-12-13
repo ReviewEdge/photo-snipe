@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.at3photosnipe"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -55,6 +55,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.room:room-common:2.6.1")
     // Add the Room dependencies
     val room_version = "2.6.0"
     implementation("androidx.room:room-runtime:$room_version")
