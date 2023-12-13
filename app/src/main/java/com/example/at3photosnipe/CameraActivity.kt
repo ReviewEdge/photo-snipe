@@ -130,6 +130,141 @@ class CameraActivity: ComponentActivity() {
 
 
 
+            val pList by VM.allPlayersList.collectAsState()
+            var seId by remember { mutableStateOf("") }
+            var seName by remember { mutableStateOf("") }
+
+            for(it in pList) {
+                if((it.player_id != VM.currentPlayer!!.player_id) and (it.gameInstanceId == VM.currentGameInstance!!.game_id)) {
+                    seId = it.player_id.toString()
+                    seName = it.name
+                    break
+                }
+            }
+
+            var expanded by remember { mutableStateOf(false) }
+
+
+
+            if (shouldShowCamera.value) {
+                CameraView(
+                    outputDirectory = outputDirectory,
+                    executor = cameraExecutor,
+                    onImageCaptured = ::handleImageCapture,
+                    onError = { Log.e("kilo", "View error:", it) }
+                )
+            }
+            if (shouldShowPhoto.value) {
+                Column(modifier = Modifier.fillMaxWidth()){
+                    Image(
+                        painter = rememberAsyncImagePainter(photoUri),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    val lContext = LocalContext.current
+
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp)
+                    ) {
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = {
+                                expanded = !expanded
+                            }
+                        ) {
+                            TextField(
+//                                value = seName,
+                                value = "Select who you sniped",
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                                modifier = Modifier.menuAnchor()
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+
+
+                                pList.forEach { player ->
+
+                                    //TODO: switch versions after testing
+                                    if (player.gameInstanceId == VM.currentGameInstance!!.game_id) {
+//                                  if ((player.gameInstanceId == VM.currentGameInstance!!.game_id) and (player.player_id != VM.currentPlayer!!.player_id)) {
+
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                seId = player.player_id.toString()
+                                                seName = player.name
+
+                                                expanded = false
+                                                Toast.makeText(lContext, player.name, Toast.LENGTH_SHORT).show()
+                                            },
+                                            text = { Text(player.name) }
+                                        )
+                                    }
+
+                                }
+
+                            }
+                        }
+                    }
+
+
+                    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier
+                        .fillMaxWidth()){
+
+
+                        Button(
+                            onClick = {
+                                finish()
+//                                lContext.startActivity(Intent(lContext, CameraActivity::class.java))
+                            },
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            Text(text = "Cancel",
+                                fontFamily = FontFamily(Font(resId = R.font.poppins_light)))
+                        }
+                        Button(
+//                            onClick = { lContext.startActivity(Intent(lContext, AfterSnipeActivity::class.java)) },
+                            onClick = {
+
+
+
+                                val ns = VM.newSnipe(
+                                    pictureRes = photoUri.toString(),
+                                    snipeeId = seId.toInt(),
+                                    location = ""
+                                )
+
+
+                                finish()
+
+
+                          },
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            Text(text = "Save Snipe",
+                                fontFamily = FontFamily(Font(resId = R.font.poppins_light))
+                            )
+                            isCameraScreen = false
+                        }
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
         }
         requestCameraPermission()
         outputDirectory = getOutputDirectory()
