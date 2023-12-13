@@ -20,13 +20,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.at3photosnipe.GameViewModel
 import com.example.at3photosnipe.Player
+import com.example.at3photosnipe.R
 
 @Composable
-fun GameInfo(VM: GameViewModel) {
+fun GameInfo(VM: GameViewModel, Map: () -> Unit) {
 
     Column (
         modifier = Modifier
@@ -49,6 +52,27 @@ fun GameInfo(VM: GameViewModel) {
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 8.dp)
         )
+
+
+        Button(
+            onClick = { Map() },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(text = "View Map",
+                fontFamily = FontFamily(
+                    Font(resId = R.font.poppins_light)
+                )
+            )
+        }
+
+
+        Divider(modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp, horizontal = 8.dp)
+        )
+
+
+
 
         Text(text="Players:", fontSize = 24.sp, modifier = Modifier
             .padding(8.dp)
