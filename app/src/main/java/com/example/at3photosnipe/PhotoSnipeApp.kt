@@ -43,6 +43,7 @@ public var isCameraScreen = false
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+//fun PhotoSnipeApp(VM: GameViewModel) {
 fun PhotoSnipeApp() {
     val VM : GameViewModel = GameViewModel.getInstance()
 
@@ -169,12 +170,12 @@ fun MyTopBar(canGoBack: Boolean,
         Button(onClick = {
             selectGame()
         }) {
-            Text(text = "New Game")
+            Text(text = "Change Game")
         }
         Button(onClick = {
             goToMain()
         }) {
-            Text(text = "PhotoSnipe")
+            Text(text = "Stream")
         }
     }
 }
