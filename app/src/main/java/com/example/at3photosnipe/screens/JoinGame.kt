@@ -24,11 +24,14 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.at3photosnipe.GameViewModel
 import com.example.at3photosnipe.Player
+import com.example.at3photosnipe.R
 import com.example.at3photosnipe.data.GameInstance
 
 
@@ -120,7 +123,13 @@ fun JoinGame(VM: GameViewModel, Join: () -> Unit) {
         },
             modifier = Modifier.padding(12.dp)
         ) {
-            Text(text="JOIN GAME", fontSize = 24.sp)
+            Text(
+                text="Join Game",
+                fontSize = 24.sp,
+                fontFamily = FontFamily(
+                    Font(resId = R.font.poppins_light)
+                )
+            )
         }
 
     }

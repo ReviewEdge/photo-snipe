@@ -26,11 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.at3photosnipe.GameViewModel
+import com.example.at3photosnipe.R
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -61,6 +65,7 @@ fun StartNewGame(VM: GameViewModel, CreateGame: () -> Unit) {
             },
             label = { Text("Enter a name for your game:") },
             keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
                 imeAction = ImeAction.Done
             ),
             modifier = Modifier
@@ -102,7 +107,9 @@ fun StartNewGame(VM: GameViewModel, CreateGame: () -> Unit) {
         },
             modifier = Modifier.padding(12.dp)
         ) {
-            Text(text="START NEW GAME", fontSize = 24.sp)
+            Text(text="Start New Game", fontSize = 24.sp,
+                fontFamily = FontFamily(Font(resId = R.font.poppins_light))
+            )
         }
 
     }

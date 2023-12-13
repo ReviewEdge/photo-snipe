@@ -36,6 +36,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -89,7 +91,10 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
                         modifier = Modifier.clickable(enabled = true, onClick={goToInfo()}),
                         text = it,
 //                        modifier = Modifier.padding(top = 8.dp),
-                        fontSize = 32.sp
+                        fontSize = 32.sp,
+                        fontFamily = FontFamily(
+                            Font(resId = R.font.poppins_bold)
+                        )
                     )
                 }
 
@@ -101,24 +106,36 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
                     contentDescription = null,
                     modifier = Modifier.clickable{ goToInfo() }
                 )
+
             }
+
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Scores:", modifier = Modifier.padding(8.dp), fontSize = 19.sp)
+                Text(text = "Scores:", modifier = Modifier.padding(8.dp), fontSize = 19.sp,
+                    fontFamily = FontFamily(
+                        Font(resId = R.font.poppins_bold)
+                    ))
+
                 Button(
                     onClick = { Map() },
-                    modifier = Modifier.padding(12.dp)
+                    modifier = Modifier.padding(8.dp)
                 ) {
-                    Text(text = "View Map")
+                    Text(text = "View Map",
+                        fontFamily = FontFamily(
+                            Font(resId = R.font.poppins_light)
+                        ))
                 }
+
             }
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.Start,
+//                verticalArrangement = Arrangement.Top,
                 modifier = Modifier.fillMaxWidth(),
                 content = {
                     items(playerList) { player ->
@@ -129,9 +146,10 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
                 }
             )
 
-            Divider(color = Color(android.graphics.Color.parseColor("#93a8c9")))
-
         }
+
+        Divider(color = Color(android.graphics.Color.parseColor("#93a8c9")))
+
 
         Column () {
 
@@ -184,7 +202,7 @@ fun PlayerItem(player: Player) {
     Text(
         text = "${player.name} - ${player.score}",
 //        style = MaterialTheme.typography.body1,
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
     )
 }
 

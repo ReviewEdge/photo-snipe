@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType.Companion.Text
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
@@ -124,131 +127,9 @@ class CameraActivity: ComponentActivity() {
         setContent {
 
 
-            val pList by VM.allPlayersList.collectAsState()
-            var seId by remember { mutableStateOf("") }
-            var seName by remember { mutableStateOf("") }
-
-            for(it in pList) {
-                if((it.player_id != VM.currentPlayer!!.player_id) and (it.gameInstanceId == VM.currentGameInstance!!.game_id)) {
-                    seId = it.player_id.toString()
-                    seName = it.name
-                    break
-                }
-            }
-
-            var expanded by remember { mutableStateOf(false) }
 
 
 
-
-
-            if (shouldShowCamera.value) {
-                CameraView(
-                    outputDirectory = outputDirectory,
-                    executor = cameraExecutor,
-                    onImageCaptured = ::handleImageCapture,
-                    onError = { Log.e("kilo", "View error:", it) }
-                )
-            }
-            if (shouldShowPhoto.value) {
-                Column(){
-                    Image(
-                        painter = rememberAsyncImagePainter(photoUri),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    val lContext = LocalContext.current
-
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp)
-                    ) {
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = {
-                                expanded = !expanded
-                            }
-                        ) {
-                            TextField(
-//                                value = seName,
-                                value = "Select who you sniped",
-                                onValueChange = {},
-                                readOnly = true,
-                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                                modifier = Modifier.menuAnchor()
-                            )
-
-                            ExposedDropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false }
-                            ) {
-
-
-                                pList.forEach { player ->
-
-                                    //TODO: switch versions after testing
-                                    if (player.gameInstanceId == VM.currentGameInstance!!.game_id) {
-//                                  if ((player.gameInstanceId == VM.currentGameInstance!!.game_id) and (player.player_id != VM.currentPlayer!!.player_id)) {
-
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                seId = player.player_id.toString()
-                                                seName = player.name
-
-                                                expanded = false
-                                                Toast.makeText(lContext, player.name, Toast.LENGTH_SHORT).show()
-                                            },
-                                            text = { Text(player.name) }
-                                        )
-                                    }
-
-                                }
-
-                            }
-                        }
-                    }
-
-
-                    Row(){
-
-
-                        Button(
-                            onClick = {
-                                finish()
-//                                lContext.startActivity(Intent(lContext, CameraActivity::class.java))
-                            },
-                            modifier = Modifier.padding(12.dp)
-                        ) {
-                            Text(text = "Cancel")
-                        }
-                        Button(
-//                            onClick = { lContext.startActivity(Intent(lContext, AfterSnipeActivity::class.java)) },
-                            onClick = {
-
-
-
-                                val ns = VM.newSnipe(
-                                    pictureRes = photoUri.toString(),
-                                    snipeeId = seId.toInt(),
-                                    location = ""
-                                )
-
-
-                                finish()
-
-
-                          },
-                            modifier = Modifier.padding(12.dp)
-                        ) {
-                            Text(text = "Save Snipe")
-                            isCameraScreen = false
-                        }
-                    }
-                }
-            }
         }
         requestCameraPermission()
         outputDirectory = getOutputDirectory()

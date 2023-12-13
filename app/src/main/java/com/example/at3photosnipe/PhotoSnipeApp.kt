@@ -18,6 +18,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -49,15 +51,19 @@ fun PhotoSnipeApp() {
 
     val navController = rememberNavController()
     val currentScreenHandler by navController.currentBackStackEntryAsState()
-    val isNotStartScreen = currentScreenHandler?.destination?.route != Screens.SelectGame.route
+    val isNotStartScreen = ((currentScreenHandler?.destination?.route != Screens.SelectGame.route) and (currentScreenHandler?.destination?.route != Screens.NewGame.route) and (currentScreenHandler?.destination?.route != Screens.JoinGame.route))
+    val isNotStreamScreen = currentScreenHandler?.destination?.route != Screens.Main.route
     var isCameraScreen = currentScreenHandler?.destination?.route == Screens.CameraView.route
+
 
     var cameraEnable = false
 
     if (currentScreenHandler?.destination?.route == Screens.CameraView.route ||
         currentScreenHandler?.destination?.route == Screens.Confirm.route ||
         currentScreenHandler?.destination?.route == Screens.Main.route ||
-        currentScreenHandler?.destination?.route == Screens.Map.route)
+        currentScreenHandler?.destination?.route == Screens.Map.route ||
+        currentScreenHandler?.destination?.route == Screens.GameInfo.route
+        )
     {
          cameraEnable = true
     }
@@ -98,7 +104,10 @@ fun PhotoSnipeApp() {
                 })
             }
             composable(route = Screens.GameInfo.route) {
-                GameInfo(VM=VM
+                GameInfo(VM=VM,
+                    Map = {
+                        navController.navigate(Screens.Map.route)
+                    }
 //                    CreateGame = {
 //                    navController.navigate(Screens.GameInfo.route)
 //                }
@@ -170,12 +179,15 @@ fun MyTopBar(canGoBack: Boolean,
         Button(onClick = {
             selectGame()
         }) {
-            Text(text = "Change Game")
+            Text(text = "CHANGE GAME",
+                fontFamily = FontFamily(Font(resId = R.font.poppins_light))
+            )
         }
         Button(onClick = {
             goToMain()
         }) {
-            Text(text = "Stream")
+            Text(text = "STREAM",
+                fontFamily = FontFamily(Font(resId = R.font.poppins_light)))
         }
     }
 }
