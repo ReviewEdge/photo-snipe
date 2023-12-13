@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.at3photosnipe.data.GameInstance
+import com.example.at3photosnipe.data.Snipe
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -29,26 +30,6 @@ data class Player(
     val gameInstanceId: Int
 )
 
-@Entity(tableName = "snipe")
-data class Snipe(
-    @PrimaryKey(autoGenerate = true)
-    val snipe_id: Int,
-    val picture_res: Int,
-    val sniper_id: Int,
-    val snipee_id: Int,
-    val time_of_day: String,
-    val location: String = "",
-    val gameInstanceId: Int
-)
-
-data class GameState(
-    val gameName: String,
-    val gameJoinCode: String,
-    val players: MutableList<Player> = mutableListOf(),
-    var snipes: MutableList<Snipe> = mutableListOf(),
-    val gameAdmin: Player,
-    var currentPlayer: Player,
-)
 
 //class GameViewModel : ViewModel() {
 class GameViewModel(
@@ -56,7 +37,6 @@ class GameViewModel(
     private val playerDao: PlayerDao,
     private val gameInstanceDoa: GameInstanceDao
 ) : ViewModel() {
-    var gameState: StateFlow<GameState>? = null
 
     // get snipes from db
     val snipes = snipeDao.getAllSnipes()
@@ -81,6 +61,38 @@ class GameViewModel(
 //        createPlayerTable()
 //        createSnipeTable()
 //    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun newSnipe(
+        pictureRes: String,
+        snipeeId: Int,
+        location: String,
+    ): Snipe {
+
+        val tOD = MyDateUtils.getCurrentDateTimeString()
+
+        val newSnipe = Snipe(
+            snipe_id = generateSnipeId(),
+            picture_res = pictureRes,
+            sniper_id = currentPlayer!!.player_id,
+            snipee_id = snipeeId,
+            time_of_day = tOD,
+            //TODO: get the location data
+            location = location,
+            gameInstanceId = currentGameInstance!!.game_id
+        )
+
+        // save new snipe to db
+        viewModelScope.launch {
+            snipeDao.upsertSnipe(newSnipe)
+        }
+
+        // add point
+        currentPlayer!!.score = currentPlayer!!.score+1
+        saveCurrentGameAndPlayerToDB()
+
+        return newSnipe
+    }
 
     fun myFromList(value: List<Int>?): String? {
         return value?.joinToString(",")
@@ -123,22 +135,22 @@ class GameViewModel(
 
 
     // TESTING
-    private fun createSnipeTable() {
-        // fills db with test data
-
-        val s1 = Snipe(picture_res = R.drawable.architecture, sniper_id = 0, snipee_id = 1, time_of_day = "10:27 AM", snipe_id = 0, gameInstanceId = 0)
-        val s2 = Snipe(picture_res = R.drawable.business, sniper_id = 1, snipee_id = 0, time_of_day = "10:52 AM", snipe_id = 0, gameInstanceId = 0)
-        val s3 = Snipe(picture_res = R.drawable.culinary, sniper_id = 2, snipee_id = 0, time_of_day = "11:08 AM", snipe_id = 0, gameInstanceId = 0)
-        val s4 = Snipe(picture_res = R.drawable.film, sniper_id = 3, snipee_id = 2, time_of_day = "11:15 AM", snipe_id = 0, gameInstanceId = 0)
-
-        val listOfSnipes = listOf(s1,s2,s3,s4)
-
-        viewModelScope.launch {
-            listOfSnipes.forEach{
-                snipeDao.upsertSnipe(it)
-            }
-        }
-    }
+//    private fun createSnipeTable() {
+//        // fills db with test data
+//
+//        val s1 = Snipe(picture_res = R.drawable.architecture, sniper_id = 0, snipee_id = 1, time_of_day = "10:27 AM", snipe_id = 0, gameInstanceId = 0)
+//        val s2 = Snipe(picture_res = R.drawable.business, sniper_id = 1, snipee_id = 0, time_of_day = "10:52 AM", snipe_id = 0, gameInstanceId = 0)
+//        val s3 = Snipe(picture_res = R.drawable.culinary, sniper_id = 2, snipee_id = 0, time_of_day = "11:08 AM", snipe_id = 0, gameInstanceId = 0)
+//        val s4 = Snipe(picture_res = R.drawable.film, sniper_id = 3, snipee_id = 2, time_of_day = "11:15 AM", snipe_id = 0, gameInstanceId = 0)
+//
+//        val listOfSnipes = listOf(s1,s2,s3,s4)
+//
+//        viewModelScope.launch {
+//            listOfSnipes.forEach{
+//                snipeDao.upsertSnipe(it)
+//            }
+//        }
+//    }
 
 
     fun gameExists(): Boolean {
@@ -334,11 +346,6 @@ class GameViewModel(
 //
 //        gameState!!.value.snipes = mutableListOf(s1,s2,s3,s4)
 //    }
-
-    fun getSnipes(): MutableList<Snipe> {
-        return gameState!!.value.snipes
-    }
-
 
 
     companion object {

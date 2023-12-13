@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
+import com.example.at3photosnipe.data.Snipe
 import kotlinx.coroutines.flow.Flow
 
 @Dao

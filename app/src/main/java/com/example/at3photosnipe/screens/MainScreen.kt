@@ -1,11 +1,13 @@
 package com.example.at3photosnipe.screens
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,9 +41,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.example.at3photosnipe.GameViewModel
+import com.example.at3photosnipe.MyDateUtils
 import com.example.at3photosnipe.Player
-import com.example.at3photosnipe.Snipe
+import com.example.at3photosnipe.data.Snipe
 import com.example.at3photosnipe.R
 
 
@@ -47,6 +55,9 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
 
     val snipeList by VM.snipes.collectAsState()
     val playerList by VM.allPlayersList.collectAsState()
+
+    var someSnipesExist by remember { mutableStateOf(false) }
+
 
 
     Column {
@@ -61,6 +72,11 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+            Spacer(
+                modifier = Modifier
+                    .height(8.dp) // Adjust the value as needed
+            )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -72,10 +88,19 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
                     Text(
                         modifier = Modifier.clickable(enabled = true, onClick={goToInfo()}),
                         text = it,
-                        //                modifier = Modifier.padding(16.dp)
+//                        modifier = Modifier.padding(top = 8.dp),
                         fontSize = 32.sp
                     )
                 }
+
+                Spacer(modifier = Modifier.padding(8.dp))
+
+
+                Image(
+                    painterResource(id = R.drawable.baseline_info_24),
+                    contentDescription = null,
+                    modifier = Modifier.clickable{ goToInfo() }
+                )
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -116,14 +141,20 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
 //                reverseLayout = true
             ) {
 
-                var noSnipes = true
                 items(snipeList) { snipe ->
                     if(snipe.gameInstanceId == VM.currentGameInstance!!.game_id) {
                         PictureCard(snipe = snipe, VM=VM)
-                        noSnipes = false
+                        someSnipesExist = true
                     }
                 }
 
+
+            }
+
+            if (!someSnipesExist) {
+                Spacer(modifier = Modifier.padding(16.dp))
+
+                Text("No Snipes Yet")
 
             }
 
@@ -171,7 +202,7 @@ fun PictureCard(snipe: Snipe, VM: GameViewModel) {
     ) {
         // Display the picture
         Image(
-            painter = painterResource(id = snipe.picture_res),
+            painter = rememberAsyncImagePainter(Uri.parse(snipe.picture_res)),
             contentDescription = null, // You should provide a proper content description
             modifier = Modifier
 //                .fillMaxWidth()
@@ -222,7 +253,7 @@ fun PictureCard(snipe: Snipe, VM: GameViewModel) {
 
         // Display the time of day
         Text(
-            text = "${snipe.time_of_day}",
+            text = "${MyDateUtils.formatDateStringCustom(snipe.time_of_day)}",
             fontSize = 12.sp,
 //            style = MaterialTheme.typography.caption,
             modifier = Modifier
