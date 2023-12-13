@@ -163,7 +163,7 @@ fun ShowMap(){
     Log.e("lat", otherLat.toString())
     Log.e("lng", otherLng.toString())
 
-    if (otherLat != 0.0){
+//    if (otherLat != 0.0){
 
         val locs = listOf("30.123,-100.445", "31.123,-101.445", "32.123,-102.445", "33.123,-103.445", "34.123,-104.445", "${otherLat.toString()},${otherLng.toString()}")
 
@@ -216,7 +216,7 @@ fun ShowMap(){
                 )
             }
         }
-    }
+//    }
 }
 
 // this function converts from an image in our project into a marker that will show up on google maps
