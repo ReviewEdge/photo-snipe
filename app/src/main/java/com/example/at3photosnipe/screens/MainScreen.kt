@@ -138,6 +138,7 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
 //                verticalArrangement = Arrangement.Top,
                 modifier = Modifier.fillMaxWidth(),
                 content = {
+
                     items(playerList) { player ->
                         if(player.gameInstanceId == VM.currentGameInstance!!.game_id) {
                             PlayerItem(player = player)
@@ -159,7 +160,7 @@ fun MainGame(VM: GameViewModel, Map: () -> Unit, goToInfo: () -> Unit){
 //                reverseLayout = true
             ) {
 
-                items(snipeList) { snipe ->
+                items(snipeList.sortedBy { snipe: Snipe -> snipe.time_of_day }) { snipe ->
                     if(snipe.gameInstanceId == VM.currentGameInstance!!.game_id) {
                         PictureCard(snipe = snipe, VM=VM)
                         someSnipesExist = true
