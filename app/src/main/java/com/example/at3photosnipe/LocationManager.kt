@@ -35,6 +35,8 @@ fun getUserLocation(context: Context): LatandLong {
 
     var currentUserLocation by remember { mutableStateOf(LatandLong()) }
 
+    val VM: GameViewModel = GameViewModel.getInstance()
+
     DisposableEffect(key1 = locationProvider) {
         locationCallback = object : LocationCallback() {
             //1
@@ -47,6 +49,7 @@ fun getUserLocation(context: Context): LatandLong {
                     // Update data class with location data
                     currentUserLocation = LatandLong(location.latitude, location.longitude)
                     Log.d("LOCATION_TAG", "${location.latitude},${location.longitude}")
+                    VM.setLocation("${location.latitude},${location.longitude}")
                 }
 
 

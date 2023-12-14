@@ -132,6 +132,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import com.example.at3photosnipe.GameViewModel
 import com.example.at3photosnipe.R
+import com.example.at3photosnipe.SnipeDao
 import com.example.at3photosnipe.getUserLocation
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -143,14 +144,54 @@ import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import kotlinx.coroutines.flow.count
+import java.util.stream.IntStream.range
 
 @Composable
 fun ShowMap(){
 
-//    val VM: GameViewModel = GameViewModel.getInstance()
+    val VM: GameViewModel = GameViewModel.getInstance()
 
 //    var locs = VM.snipeLocations.collectAsState()
 //    var len = locs.value.size
+
+//    val snipeLocations = VM.gameSnipes?.collectAsState()
+
+//    for each snipe in snip{
+//        Log.e("snipe location", "${snipe.}")
+//    }
+
+    val snipeLocations by VM.snipes.collectAsState()
+    var seId by remember { mutableStateOf("") }
+    var seName by remember { mutableStateOf("") }
+
+    var snipeName = mutableListOf<String>()
+    var snipeeName = mutableListOf<String>()
+
+    val pList by VM.allPlayersList.collectAsState()
+
+
+
+    var snipeCoords = mutableListOf<String>()
+
+    snipeLocations.forEach() { s->
+        if(s.gameInstanceId == VM.currentGameInstance?.game_id) {
+
+            pList.forEach { p->
+                if (p.player_id == s.sniper_id) {
+                    snipeName.add(p.name)
+                }
+            }
+            pList.forEach { p->
+                if (p.player_id == s.snipee_id) {
+                    snipeeName.add(p.name)
+                }
+            }
+
+
+            snipeCoords.add(s.location)
+        }
+    }
 
 
     val context = LocalContext.current
@@ -165,7 +206,7 @@ fun ShowMap(){
 
 //    if (otherLat != 0.0){
 
-        val locs = listOf("30.123,-100.445", "31.123,-101.445", "32.123,-102.445", "33.123,-103.445", "34.123,-104.445", "${otherLat.toString()},${otherLng.toString()}")
+//        val locs = listOf("30.123,-100.445", "31.123,-101.445", "32.123,-102.445", "33.123,-103.445", "34.123,-104.445", "${otherLat.toString()},${otherLng.toString()}")
 
         Column(modifier = Modifier.fillMaxSize()){
             Text(text = "Show Map Screen")
@@ -182,7 +223,7 @@ fun ShowMap(){
 
         val locations = mutableListOf<LatLng>()
 
-        for (i in locs){
+        for (i in snipeCoords){
             var temp = i
             var lat = temp.substringBeforeLast(",").toDouble()
             var lng = temp.substringAfterLast(",").toDouble()
@@ -203,17 +244,19 @@ fun ShowMap(){
             properties = properties
         ) {
             for(location in locations){
+                var i = 0
                 Marker(
                     state = rememberMarkerState(position = location),
                     draggable = true,
-                    title = "Grove City College",
-                    snippet = "Marker in GCC",
+                    title = "${snipeName[i]}",
+                    snippet = "Sniped ${snipeeName[i]}",
 //            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
                     icon = bitmapDescriptorFromVector(
                         LocalContext.current,
                         R.drawable.baseline_gps_not_fixed_24, width = 80, height = 80
                     )
                 )
+                i++;
             }
         }
 //    }

@@ -1,6 +1,7 @@
 package com.example.at3photosnipe
 
 import CameraView
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -30,6 +31,8 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,15 +51,21 @@ import androidx.lifecycle.ViewModelProvider
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.at3photosnipe.data.Snipe
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 //import com.example.testintent.ui.theme.TestIntentTheme
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+private var snipeLocation = "0.0,0.0"
+
 class CameraActivity: ComponentActivity() {
 
     val VM : GameViewModel = GameViewModel.getInstance()
-
 
     private lateinit var photoUri: Uri
     private var shouldShowPhoto: MutableState<Boolean> = mutableStateOf(false)
@@ -215,46 +224,75 @@ class CameraActivity: ComponentActivity() {
                         }
                     }
 
+                    val context = LocalContext.current
 
-                    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier
-                        .fillMaxWidth()){
+                    var location = getLocation(context = context)
 
-
-                        Button(
-                            onClick = {
-                                finish()
-//                                lContext.startActivity(Intent(lContext, CameraActivity::class.java))
-                            },
-                            modifier = Modifier.padding(12.dp)
-                        ) {
-                            Text(text = "Cancel",
-                                fontFamily = FontFamily(Font(resId = R.font.poppins_light)))
-                        }
-                        Button(
-//                            onClick = { lContext.startActivity(Intent(lContext, AfterSnipeActivity::class.java)) },
-                            onClick = {
-
-
-
-                                val ns = VM.newSnipe(
-                                    pictureRes = photoUri.toString(),
-                                    snipeeId = seId.toInt(),
-                                    location = ""
-                                )
-
-
-                                finish()
-
-
-                          },
-                            modifier = Modifier.padding(12.dp)
-                        ) {
-                            Text(text = "Save Snipe",
-                                fontFamily = FontFamily(Font(resId = R.font.poppins_light))
-                            )
-                            isCameraScreen = false
-                        }
+                    while (location.equals("0.0,0.0")){
+                        location = getLocation(context = context)
                     }
+
+                    snipeLocation = ("41.155298,-80.079247")
+//
+//                    val otherLoc = getUserLocation(context = context)
+//                    val otherLat = otherLoc.latitude
+//                    val otherLng = otherLoc.longitude
+//
+//
+//                    Log.e("lat", otherLat.toString())
+//                    Log.e("lng", otherLng.toString())
+//
+//
+//                    var location = "11.1,11.1"
+//
+//                    if (otherLat != 0.0){
+//                        var location = otherLat.toString().plus(",").plus(otherLng.toString())
+//                        Log.e("CameraActivityLocation", "${location}")
+//                    }
+
+//                    if (!snipeLocation.contains("0.0")){
+
+                        Row(horizontalArrangement = Arrangement.Center, modifier = Modifier
+                            .fillMaxWidth()){
+
+
+                            Button(
+                                onClick = {
+                                    finish()
+//                                lContext.startActivity(Intent(lContext, CameraActivity::class.java))
+                                },
+                                modifier = Modifier.padding(12.dp)
+                            ) {
+                                Text(text = "Cancel",
+                                    fontFamily = FontFamily(Font(resId = R.font.poppins_light)))
+                            }
+                            Button(
+//                            onClick = { lContext.startActivity(Intent(lContext, AfterSnipeActivity::class.java)) },
+                                onClick = {
+
+
+
+                                    val ns = VM.newSnipe(
+                                        pictureRes = photoUri.toString(),
+                                        snipeeId = seId.toInt(),
+                                        location = snipeLocation
+                                    )
+
+
+                                    finish()
+
+
+                                },
+                                modifier = Modifier.padding(12.dp)
+                            ) {
+                                Text(text = "Save Snipe",
+                                    fontFamily = FontFamily(Font(resId = R.font.poppins_light))
+                                )
+                                isCameraScreen = false
+                            }
+//                        }
+                    }
+
                 }
             }
 
@@ -271,3 +309,68 @@ class CameraActivity: ComponentActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 }
+@SuppressLint("CoroutineCreationDuringComposition")
+@Composable
+fun UpdateGetLocation(context: Context) {
+    var location by remember { mutableStateOf("0.0,0.0") }
+
+    // Use LaunchedEffect to start a coroutine
+//    LaunchedEffect(Unit) {
+////        while (true) {
+//            // Call getLocation function every 100 milliseconds
+//            snipeLocation = {getLocation(context = context)}
+//
+//            // Delay for 100 milliseconds
+//            delay(1000)
+////        }
+//    }
+
+    CoroutineScope(Dispatchers.Main).launch() {
+        coroutineScope {
+//            repeat(10) {
+//                delay(500)
+//                println("JOB1 coroutine num: ${++num}")
+//            }
+            //        while (true) {
+            // Call getLocation function every 100 milliseconds
+//            snipeLocation = getLocation(context = context)
+
+            // Delay for 100 milliseconds
+            delay(1000)
+//        }
+        }
+    }
+
+    // Display the latest location information
+    Text("Current Location: $location")
+}
+
+@Composable
+fun getLocation(context: Context): String{
+
+    val VM: GameViewModel = GameViewModel.getInstance()
+
+
+    val otherLoc = getUserLocation(context = context)
+    val otherLat = otherLoc.latitude
+    val otherLng = otherLoc.longitude
+
+
+//    Log.e("lat", otherLat.toString())
+//    Log.e("lng", otherLng.toString())
+
+
+//    var location = "0.0,0.0"
+
+//    if (otherLat != 0.0){
+        var location = otherLat.toString().plus(",").plus(otherLng.toString())
+        Log.e("CameraActivityLocation", "${location}")
+//    }
+
+    snipeLocation = location
+
+    location = VM.getLocation()
+    return location
+
+}
+

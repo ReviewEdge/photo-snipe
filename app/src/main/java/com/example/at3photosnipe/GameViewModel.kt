@@ -29,6 +29,7 @@ data class Player(
     val gameInstanceId: Int
 )
 
+private var location = ""
 
 //class GameViewModel : ViewModel() {
 class GameViewModel(
@@ -49,9 +50,19 @@ class GameViewModel(
     val gameInstances = gameInstanceDoa.getAllGameInstances()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList()) //this function will be called IF there is a subscriber to this flow
 
-
     var currentGameInstance: GameInstance? = null
     var currentPlayer: Player? = null
+
+    val gameSnipes = currentGameInstance?.let { snipeDao.getAllInGameSnipes(it.game_id) }
+        ?.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    fun setLocation(loc: String){
+        location = loc
+    }
+
+    fun getLocation() : String{
+        return location
+    }
 
 
 
@@ -316,14 +327,11 @@ class GameViewModel(
 
     }
 
-
     @Composable
     fun isNameTaken(checkName: String): Boolean {
         val playerList: List<Player> by playerDao.getAllPlayers().collectAsState(emptyList())
         return playerList.find { it.name == checkName } != null
     }
-
-
 
     fun isGameManager(): Boolean {
         return currentPlayer?.player_id == currentGameInstance?.admin_player_id
@@ -364,6 +372,4 @@ class GameViewModel(
         }
 
     }
-
-
 }
